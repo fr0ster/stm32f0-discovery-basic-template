@@ -8,12 +8,12 @@ INC += $(STD_PERIPH_LIB)/CMSIS/Device/ST/STM32F0xx/Include
 SRC := src
 BUILD_DIR := build
 
-CC=arm-none-eabi-gcc
-CXX=arm-none-eabi-g++
+CC=clang
+CXX=clang++
 OBJCOPY=arm-none-eabi-objcopy
 OBJDUMP=arm-none-eabi-objdump
 SIZE=arm-none-eabi-size
-LD=arm-none-eabi-gcc
+LD=ld.lld-6.0
 
 # Location of the linker scripts
 LINKER_SPECS := --specs=nano.specs --specs=nosys.specs
@@ -21,18 +21,12 @@ LDSCRIPT_INC=Device/ldscripts
 
 CFLAGS = $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -Os -D$(DEVICE)
-CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
+CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb --target=thumbv6-unknown-none-eabi
 CFLAGS += -ffunction-sections -fdata-sections
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
-LDFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += $(LINKER_SPECS)
-
-CFLAGS = $(addprefix -I,$(INC)) -DSTM32F051x8
-CFLAGS += -Wall -g -std=c99 -Os
-CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
-CFLAGS += -ffunction-sections -fdata-sections
-CFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
-LDFLAGS = -mthumb -mcpu=cortex-m0 -Wall -fdata-sections -ffunction-sections -specs=nano.specs -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
+#LDFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
+LDFLAGS += --gc-sections -Map=$(BUILD_DIR)/$(PROJ_NAME).map
+#LDFLAGS += $(LINKER_SPECS)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
@@ -42,7 +36,7 @@ OBJECTS := $(patsubst %, $(BUILD_DIR)/%.o, $(SOURCES))
 all: $(BUILD_DIR)/$(PROJ_NAME).elf
 
 $(BUILD_DIR)/$(PROJ_NAME).elf: $(OBJECTS)
-	$(LD) $(OBJECTS) $(CFLAGS) $(LDFLAGS) -o $@
+	$(LD) $(OBJECTS) $(LDFLAGS) -o $@
 	$(OBJCOPY) -O ihex $(BUILD_DIR)/$(PROJ_NAME).elf $(BUILD_DIR)/$(PROJ_NAME).hex
 	$(OBJCOPY) -O binary $(BUILD_DIR)/$(PROJ_NAME).elf $(BUILD_DIR)/$(PROJ_NAME).bin
 	$(OBJDUMP) -St $(BUILD_DIR)/$(PROJ_NAME).elf >$(BUILD_DIR)/$(PROJ_NAME).lst
