@@ -18,12 +18,15 @@ LD=ld.lld-6.0
 # Location of the linker scripts
 LDSCRIPT_INC=Device/ldscripts
 
+ASMFLAGS = $(addprefix -I,$(INC))
+ASMFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb --target=thumbv6-unknown-none-eabi
 CFLAGS = $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -Os -D$(DEVICE)
 CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb --target=thumbv6-unknown-none-eabi
 CFLAGS += -ffunction-sections -fdata-sections
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += --gc-sections -Map=$(BUILD_DIR)/$(PROJ_NAME).map
+LDFLAGS += --lto-O3
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
@@ -43,7 +46,7 @@ $(BUILD_DIR):
 	mkdir -p $(addprefix $@/, $(SRC))
 
 $(BUILD_DIR)/%.s.o: %.s | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(ASMFLAGS) -c $< -o $@
 $(BUILD_DIR)/%.cpp.o: %.cpp | $(BUILD_DIR)
 	$(CXX) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
@@ -52,3 +55,4 @@ $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
 clean:
 	rm -fR $(BUILD_DIR)
 
+rebuild: clean all
