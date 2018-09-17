@@ -8,12 +8,12 @@ INC += $(STD_PERIPH_LIB)/CMSIS/Device/ST/STM32F0xx/Include
 SRC := src
 BUILD_DIR := build
 
-CC=clang-6.0
-CXX=clang++-6.0
-OBJCOPY=llvm-objcopy-6.0
-OBJDUMP=llvm-objdump-6.0
-SIZE=llvm-size-6.0
-LD=ld.lld-6.0
+CC=clang
+CXX=clang++
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+SIZE=llvm-size
+LD=ld.lld
 
 # Location of the linker scripts
 LDSCRIPT_INC=Device/ldscripts
