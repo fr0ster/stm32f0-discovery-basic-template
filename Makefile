@@ -22,10 +22,10 @@ LDSCRIPT_INC=Device/ldscripts
 CFLAGS = $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -Os -D$(DEVICE)
 CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -ffunction-sections -fdata-sections -flto
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += $(LINKER_SPECS) --lto
+LDFLAGS += $(LINKER_SPECS) -flto
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
