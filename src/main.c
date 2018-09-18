@@ -35,7 +35,7 @@
       the datasheet.
     - The green LED is switched on.
 
-  *    
+  *
   ******************************************************************************
   * @attention
   *
@@ -77,7 +77,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void ConfigureTIMxAsPWM_EdgeAligned(void);
 /* Private functions ---------------------------------------------------------*/
-void __attribute__ ((weak)) _init(void)  {}
+
 /**
   * @brief  Main program.
   * @param  None

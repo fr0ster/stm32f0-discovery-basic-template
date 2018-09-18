@@ -43,7 +43,6 @@ flags = [
     '-ILibraries',
     '-ILibraries/CMSIS/Device/ST/STM32F0xx/Include',
     '-ILibraries/CMSIS/Include',
-    '-ILibraries/STM32F0xx_StdPeriph_Driver/inc',
     ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
