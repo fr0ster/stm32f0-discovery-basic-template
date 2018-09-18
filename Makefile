@@ -13,7 +13,7 @@ CXX=arm-none-eabi-g++
 OBJCOPY=arm-none-eabi-objcopy
 OBJDUMP=arm-none-eabi-objdump
 SIZE=arm-none-eabi-size
-LD=arm-none-eabi-ld
+LD=arm-none-eabi-gcc
 
 # Location of the linker scripts
 LINKER_SPECS := --specs=nano.specs
@@ -28,9 +28,10 @@ CFLAGS += -Wall -g -Os -D$(DEVICE)
 CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
 CFLAGS += -ffunction-sections -fdata-sections -O3
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
-LDFLAGS += $(LIBSPEC)
-LDFLAGS += --gc-sections --cref -Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += -flto -nostartfiles
+#LDFLAGS += $(LIBSPEC)
+LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
+LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
+LDFLAGS += -flto -O3
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
