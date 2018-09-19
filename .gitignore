@@ -6,6 +6,7 @@ compile_commands.json
 *.hex
 *.lst
 *.map
+*.jlink
 tags
 .tags
 TAGS

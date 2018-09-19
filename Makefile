@@ -39,6 +39,8 @@ SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.cpp))
 OBJECTS := $(patsubst %, $(BUILD_DIR)/%.o, $(SOURCES))
 
+JLINK_SCRIPT=$(PROJ_NAME).jlink
+
 all: $(BUILD_DIR)/$(PROJ_NAME).elf
 
 $(BUILD_DIR)/$(PROJ_NAME).elf: $(OBJECTS)
@@ -47,6 +49,12 @@ $(BUILD_DIR)/$(PROJ_NAME).elf: $(OBJECTS)
 	$(OBJCOPY) -O binary $(BUILD_DIR)/$(PROJ_NAME).elf $(BUILD_DIR)/$(PROJ_NAME).bin
 	$(OBJDUMP) -St $(BUILD_DIR)/$(PROJ_NAME).elf >$(BUILD_DIR)/$(PROJ_NAME).lst
 	$(SIZE) $(BUILD_DIR)/$(PROJ_NAME).elf
+	@echo 'connect' > $(BUILD_DIR)/$(JLINK_SCRIPT)
+	@echo 'r' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
+	@echo 'h' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
+	@echo 'loadbin $(BUILD_DIR)/$(PROJ_NAME).bin 0x8000000' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
+	@echo 'r' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
+	@echo 'q' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 
 $(BUILD_DIR):
 	mkdir -p $(addprefix $@/, $(SRC))
@@ -61,3 +69,7 @@ $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
 clean:
 	rm -fR $(BUILD_DIR)
 
+rebuild: clean all
+
+flash:
+	JLinkExe -if SWD -speed 10000 -device $(DEVICE) -commanderscript $(BUILD_DIR)/$(JLINK_SCRIPT)
