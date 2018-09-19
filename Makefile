@@ -1,5 +1,5 @@
-PROJ_NAME ?= hello
-DEVICE := STM32F051x8
+PROJ_NAME=hello
+DEVICE=STM32F051x8
 # Location of the Libraries folder from the STM32F0xx Standard Peripheral Library
 STD_PERIPH_LIB=Libraries
 INC := inc
@@ -11,64 +11,53 @@ BUILD_DIR := build
 
 CC=clang
 CXX=clang++
-OBJCOPY=llvm-objcopy
-OBJDUMP=llvm-objdump
-SIZE=llvm-size
-LD=ld.lld
+OBJCOPY=arm-none-eabi-objcopy
+OBJDUMP=arm-none-eabi-objdump
+SIZE=arm-none-eabi-size
+LD=arm-none-eabi-gcc
 
 # Location of the linker scripts
+LINKER_SPECS := --specs=nano.specs --specs=nosys.specs
 LDSCRIPT_INC=Device/ldscripts
 
-ASMFLAGS = $(addprefix -I,$(INC))
-ASMFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb --target=thumbv6-unknown-none-eabi
 CFLAGS = $(addprefix -I,$(INC))
-CFLAGS += -Wall -g -Os -D$(DEVICE)
-CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb --target=thumbv6-unknown-none-eabi
-CFLAGS += -ffunction-sections -fdata-sections
+CFLAGS += -Wall -g -O3
+CFLAGS += -mlittle-endian -mcpu=cortex-m0 -march=armv6-m -mthumb
+CFLAGS += --target=thumbv6-unknown-none-eabi
+CFLAGS += -D$(DEVICE) -ffunction-sections -fdata-sections
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
-LDFLAGS += --gc-sections -Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += -L /usr/lib/arm-none-eabi/lib/thumb
-LDFLAGS += -L /usr/lib/gcc/arm-none-eabi/5.4.1/thumb
-LDFLAGS += --lto-O3 -lc_nano -lnosys -lgcc
-LDFLAGS += --unresolved-symbols=report-all
-LDFLAGS += /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
-LDFLAGS += /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m/crti.o
-LDFLAGS += /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtn.o
-LDFLAGS += /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtend.o
-#LDFLAGS += --start-group
-#LDFLAGS += -u _sbrk -u link -u _close -u _fstat
-#LDFLAGS += -u _isatty -u _lseek -u _read -u _write
-#LDFLAGS += -u _exit -u kill -u _getpid
-#LDFLAGS += --end-group
+LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
+LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
+LDFLAGS += -flto -O3
+LDFLAGS += $(LINKER_SPECS)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.cpp))
 OBJECTS := $(patsubst %, $(BUILD_DIR)/%.o, $(SOURCES))
+
 JLINK_SCRIPT=$(PROJ_NAME).jlink
 
 all: $(BUILD_DIR)/$(PROJ_NAME).elf
 
 $(BUILD_DIR)/$(PROJ_NAME).elf: $(OBJECTS)
 	$(LD) $(OBJECTS) $(LDFLAGS) -o $@
-#	$(OBJCOPY) -O ihex $(BUILD_DIR)/$(PROJ_NAME).elf $(BUILD_DIR)/$(PROJ_NAME).hex
+	$(OBJCOPY) -O ihex $(BUILD_DIR)/$(PROJ_NAME).elf $(BUILD_DIR)/$(PROJ_NAME).hex
 	$(OBJCOPY) -O binary $(BUILD_DIR)/$(PROJ_NAME).elf $(BUILD_DIR)/$(PROJ_NAME).bin
-	$(OBJDUMP) -S $(BUILD_DIR)/$(PROJ_NAME).elf >$(BUILD_DIR)/$(PROJ_NAME).lst
+	$(OBJDUMP) -St $(BUILD_DIR)/$(PROJ_NAME).elf >$(BUILD_DIR)/$(PROJ_NAME).lst
 	$(SIZE) $(BUILD_DIR)/$(PROJ_NAME).elf
 	@echo 'connect' > $(BUILD_DIR)/$(JLINK_SCRIPT)
-	@echo 'erase' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 	@echo 'r' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 	@echo 'h' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 	@echo 'loadbin $(BUILD_DIR)/$(PROJ_NAME).bin 0x8000000' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 	@echo 'r' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
-	@echo 'g' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 	@echo 'q' >> $(BUILD_DIR)/$(JLINK_SCRIPT)
 
 $(BUILD_DIR):
 	mkdir -p $(addprefix $@/, $(SRC))
 
 $(BUILD_DIR)/%.s.o: %.s | $(BUILD_DIR)
-	$(CC) $(ASMFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/%.cpp.o: %.cpp | $(BUILD_DIR)
 	$(CXX) $(CFLAGS) -c $< -o $@
 $(BUILD_DIR)/%.c.o: %.c | $(BUILD_DIR)
