@@ -30,7 +30,7 @@ CFLAGS += -D$(DEVICE) -ffunction-sections -fdata-sections
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
 LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += -flto -O$(OPT_LEVEL)
+LDFLAGS += -flto
 LDFLAGS += $(LINKER_SPECS)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
