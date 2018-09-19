@@ -16,7 +16,7 @@ SIZE=arm-none-eabi-size
 LD=arm-none-eabi-gcc
 
 # Location of the linker scripts
-LINKER_SPECS := --specs=nano.specs
+LINKER_SPECS := --specs=nano.specs --specs=nosys.specs
 LDSCRIPT_INC=Device/ldscripts
 LIBSPEC := -L /usr/lib/arm-none-eabi/newlib -L /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m
 LIBSPEC += -L /usr/lib/arm-none-eabi/newlib
@@ -32,6 +32,7 @@ LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
 LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
 LDFLAGS += -flto -O3
+LDFLAGS += $(LINKER_SPECS)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
