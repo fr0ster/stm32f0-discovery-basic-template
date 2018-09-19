@@ -20,15 +20,17 @@ LD=arm-none-eabi-gcc
 LINKER_SPECS := --specs=nano.specs --specs=nosys.specs
 LDSCRIPT_INC=Device/ldscripts
 
+OPT_LEVEL=3
+
 CFLAGS = $(addprefix -I,$(INC))
-CFLAGS += -Wall -g -O3
+CFLAGS += -Wall -g -O$(OPT_LEVEL)
 CFLAGS += -mlittle-endian -mcpu=cortex-m0 -march=armv6-m -mthumb
 CFLAGS += --target=thumbv6-unknown-none-eabi
 CFLAGS += -D$(DEVICE) -ffunction-sections -fdata-sections
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
 LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += -flto -O3
+LDFLAGS += -flto -O$(OPT_LEVEL)
 LDFLAGS += $(LINKER_SPECS)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
