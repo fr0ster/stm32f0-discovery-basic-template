@@ -5,6 +5,7 @@ STD_PERIPH_LIB=Libraries
 INC := inc
 INC += $(STD_PERIPH_LIB)/CMSIS/Include
 INC += $(STD_PERIPH_LIB)/CMSIS/Device/ST/STM32F0xx/Include
+INC += /usr/lib/arm-none-eabi/include
 SRC := src
 BUILD_DIR := build
 
@@ -18,17 +19,13 @@ LD=arm-none-eabi-gcc
 # Location of the linker scripts
 LINKER_SPECS := --specs=nano.specs --specs=nosys.specs
 LDSCRIPT_INC=Device/ldscripts
-LIBSPEC := -L /usr/lib/arm-none-eabi/newlib -L /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m
-LIBSPEC += -L /usr/lib/arm-none-eabi/newlib
-LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/thumb/v6-m
-LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/thumb
 
 CFLAGS = $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -Os -D$(DEVICE)
-CFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
+CFLAGS += -mlittle-endian -mcpu=cortex-m0 -march=armv6-m -mthumb
+CFLAGS += --target=thumbv6-unknown-none-eabi
 CFLAGS += -ffunction-sections -fdata-sections -O3
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
-#LDFLAGS += $(LIBSPEC)
 LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
 LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
 LDFLAGS += -flto -O3
