@@ -57,6 +57,8 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
+#include <stdlib.h>
 #include "stm32f0xx.h"
 /** @addtogroup STM32F0_Snippets
   * @{
@@ -92,7 +94,7 @@ int main(void)
        system_stm32f0xx.c file
      */
   ConfigureTIMxAsPWM_EdgeAligned();
-  while (1)  
+  while (1)
   {
     __WFI();
   }
