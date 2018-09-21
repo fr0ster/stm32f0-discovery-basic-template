@@ -9,12 +9,18 @@ INC += /usr/lib/arm-none-eabi/include
 SRC := src
 BUILD_DIR := build
 
-CC=arm-none-eabi-gcc
-CXX=arm-none-eabi-g++
-OBJCOPY=arm-none-eabi-objcopy
-OBJDUMP=arm-none-eabi-objdump
-SIZE=arm-none-eabi-size
-LD=arm-none-eabi-ld
+#TOOLCHAIN_DIR=~/x-tools/arm-nano-eabi
+TOOLCHAIN_DIR=~/x-tools/arm-none-eabi
+#TOOLCHAIN_DIR=/usr
+#PREFIX=$(TOOLCHAIN_DIR)/bin/arm-nano-eabi-
+PREFIX=$(TOOLCHAIN_DIR)/bin/arm-none-eabi-
+
+CC=$(PREFIX)gcc
+CXX=$(PREFIX)g++
+OBJCOPY=$(PREFIX)objcopy
+OBJDUMP=$(PREFIX)objdump
+SIZE=$(PREFIX)size
+LD=$(PREFIX)ld
 
 # Location of the linker scripts
 LDSCRIPT_INC=Device/ldscripts
