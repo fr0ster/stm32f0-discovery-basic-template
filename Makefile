@@ -18,7 +18,7 @@ LD=arm-none-eabi-ld
 # Location of the linker scripts
 LINKER_SPECS := --specs=nano.specs
 LDSCRIPT_INC=Device/ldscripts
-LIBSPEC := -L /usr/lib/arm-none-eabi/newlib -L /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m
+LIBSPEC := -L /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m
 LIBSPEC += -L /usr/lib/arm-none-eabi/newlib
 LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/thumb/v6-m
 LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/thumb
