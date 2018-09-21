@@ -14,23 +14,26 @@ CXX=arm-none-eabi-g++
 OBJCOPY=arm-none-eabi-objcopy
 OBJDUMP=arm-none-eabi-objdump
 SIZE=arm-none-eabi-size
-LD=arm-none-eabi-gcc
+LD=arm-none-eabi-ld
 
 # Location of the linker scripts
-LINKER_SPECS := --specs=nano.specs --specs=nosys.specs
 LDSCRIPT_INC=Device/ldscripts
 
 OPT_LEVEL=3
+
+LIBSPEC := -L /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m
+LIBSPEC += -L /usr/lib/arm-none-eabi/newlib
+LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/thumb/v6-m
+LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/thumb
 
 CFLAGS = $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -O$(OPT_LEVEL)
 CFLAGS += -mlittle-endian -mcpu=cortex-m0 -march=armv6-m -mthumb
 CFLAGS += -D$(DEVICE) -ffunction-sections -fdata-sections
 LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
-LDFLAGS += -mlittle-endian -mcpu=cortex-m0  -march=armv6-m -mthumb
-LDFLAGS += -Wl,--gc-sections -Wl,--cref -Wl,-Map=$(BUILD_DIR)/$(PROJ_NAME).map
-LDFLAGS += -flto
-LDFLAGS += $(LINKER_SPECS)
+LDFLAGS += --gc-sections --cref -Map=$(BUILD_DIR)/$(PROJ_NAME).map
+LDFLAGS += -flto -nostdlib -nostartfiles
+LDFLAGS += $(LIBSPEC)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
 SOURCES += $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.s))
