@@ -5,7 +5,7 @@ STD_PERIPH_LIB=Libraries
 INC := inc
 INC += $(STD_PERIPH_LIB)/CMSIS/Include
 INC += $(STD_PERIPH_LIB)/CMSIS/Device/ST/STM32F0xx/Include
-INC += /usr/lib/arm-none-eabi/include
+INC += $(HOME)/opt/newlib/arm-none-eabi/include
 SRC := src
 BUILD_DIR := build
 
@@ -14,7 +14,6 @@ CXX=clang++
 OBJCOPY=arm-none-eabi-objcopy
 OBJDUMP=arm-none-eabi-objdump
 SIZE=arm-none-eabi-size
-#LD=arm-none-eabi-ld
 LD=ld.lld
 
 # Location of the linker scripts
@@ -22,10 +21,9 @@ LDSCRIPT_INC=Device/ldscripts
 
 OPT_LEVEL=3
 
-LIBSPEC := -L /usr/lib/gcc/arm-none-eabi/5.4.1/armv6-m
-LIBSPEC += -L /usr/lib/arm-none-eabi/newlib
-LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/arm-none-eabi/lib/thumb/v6-m
-LIBSPEC += -L /usr/local/Caskroom/gcc-arm-embedded/7-2017-q4-major/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/thumb
+NEWLIB=$(HOME)/opt/newlib/arm-none-eabi
+
+LIBSPEC := -L $(NEWLIB)/lib
 
 CFLAGS = $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -O$(OPT_LEVEL)
@@ -37,7 +35,6 @@ LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += --gc-sections --cref -Map=$(BUILD_DIR)/$(PROJ_NAME).map
 LDFLAGS += --lto-O3
 LDFLAGS += -nostdlib
-#LDFLAGS += -nostartfiles
 LDFLAGS += $(LIBSPEC)
 
 SOURCES := $(foreach sdir,$(SRC),$(wildcard $(sdir)/*.c))
