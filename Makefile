@@ -25,13 +25,16 @@ NEWLIB=$(HOME)/opt/newlib/arm-none-eabi
 
 LIBSPEC := -L $(NEWLIB)/lib
 
-CFLAGS = $(addprefix -I,$(INC))
+CFLAGS := $(addprefix -I,$(INC))
 CFLAGS += -Wall -g -O$(OPT_LEVEL)
 CFLAGS += -mlittle-endian -mcpu=cortex-m0 -march=armv6-m -mthumb
 CFLAGS += --target=armv6-unknown-none-eabi
 CFLAGS += -D$(DEVICE)
-CFLAGS += -ffunction-sections -fdata-sections
-LDFLAGS = -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
+CFLAGS += -ffunction-sections
+CFLAGS += -fdata-sections
+CFLAGS += -Qunused-arguments
+
+LDFLAGS := -L$(LDSCRIPT_INC) -TSTM32F051R8Tx_FLASH.ld
 LDFLAGS += --gc-sections --cref -Map=$(BUILD_DIR)/$(PROJ_NAME).map
 LDFLAGS += --lto-O3
 LDFLAGS += -nostdlib
